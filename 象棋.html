@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      font-family: "標楷體";
+      font-size: 50px;
+    }
+
+    *,*::before,*::after{
+      box-sizing: border-box;
+    }
+
+    p {
+      /* 文字直向排列 */
+      writing-mode: vertical-rl;
+    }
+
+    body {
+      height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    /* ========================================= */
+
+    /* 外層容器 */
+    .content {
+      /* 彈性盒 */
+      display: flex;
+      justify-content: center;
+      /* 定位 */
+      position: relative;
+    }
+
+    /* 棋盤 */
+    .main {
+      width: 900px;
+      height: 100%;
+      /* 彈性盒-欄 */
+      display: flex;
+      flex-direction: column;
+      /* 設置棋盤格邊框與棋盤邊框距離 */
+      padding: 50px;
+      border: 1px solid black;
+      position: relative;
+    }
+
+    /* 棋盤--列 */
+    .row {
+      width: 100%;
+      height: 100%;
+      /* 彈性盒-列 */
+      display: flex;
+      flex-direction: row;
+      /* 文字置中 */
+      text-align: center;
+      line-height: 100px;
+    }
+
+    /* 棋盤--列(格子) */
+    .col {
+      width: 100px;
+      height: 100px;
+
+      border: 1px solid black;
+      /* 消除左下所有棋盤邊框 */
+      border-left: none;
+      border-bottom: none;
+    }
+
+    /* 棋盤傾斜線條 */
+    
+    .row:nth-child(1) .col:nth-child(4),
+    .row:nth-child(1) .col:nth-child(5),
+    .row:nth-child(2) .col:nth-child(4),
+    .row:nth-child(2) .col:nth-child(5),
+    .row:nth-child(8) .col:nth-child(4),
+    .row:nth-child(8) .col:nth-child(5),
+    .row:nth-child(9) .col:nth-child(4),
+    .row:nth-child(9) .col:nth-child(5) {
+      position: relative;
+      /* background-color: #000000; */
+    }
+
+    /* 傾左 */
+    .row:nth-child(1) .col:nth-child(4)::before,
+    .row:nth-child(2) .col:nth-child(5)::before,
+    .row:nth-child(8) .col:nth-child(4)::before,
+    .row:nth-child(9) .col:nth-child(5)::before {
+      content: "";
+      width: 1px;
+      height: 141.42px;
+      display: block;
+      background-color: #000000;
+      transform: rotate(-45deg);
+      transform-origin: 0 0;
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    
+    /* 傾右 */
+    .row:nth-child(1) .col:nth-child(5)::before,
+    .row:nth-child(2) .col:nth-child(4)::before,
+    .row:nth-child(8) .col:nth-child(5)::before,
+    .row:nth-child(9) .col:nth-child(4)::before {
+      content: "";
+      width: 1px;
+      height: 141.42px;
+      display: block;
+      background-color: #000000;
+      transform: rotate(45deg);
+      transform-origin: 0 0;
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    /* ========================================= */
+
+    /* 顯示棋盤最左方格子的邊框 */
+    .show-L {
+      border-left: 1px solid black;
+    }
+
+    /* 顯示棋盤最下方格子的邊框 */
+    .show-B {
+      border-bottom: 1px solid black;
+    }
+
+    /* 楚河漢界 */
+    .reiver {
+      width: 100%;
+      justify-content: space-around;
+    }
+    .reiver .col {
+      width: 100%;
+    }
+    /* 
+      由於所有的左下方格子邊框消除
+      故針對 "楚河" 的右邊框進行消除作業
+    */
+    .reiver .col:nth-child(1){
+      border-right: none;
+    }
+
+    /* ========================================= */
+
+    /* 棋子區-列 */
+    .row2 {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    /* 棋子(格子) */
+    .col2 {
+      width: 80px;
+      height: 80px;
+      text-align: center;
+      line-height: 80px;
+      border-radius: 50%;
+      border: 1px solid black;
+    }
+
+    /* 所有棋子設定 */
+    .chess {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    
+    /* 黑棋 */
+    .black {
+      width: 98%;
+      height: 40%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+    
+    /* 紅棋 */
+    .red {
+      width: 98%;
+      height: 40%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items:first baseline;
+      position: absolute;
+      bottom: 0;
+      left: 6px;
+      color: red;
+    }
+    
+    /* 棋子背景 */
+    .chess .backcolor{
+      background-color: white;
+    }
+
+    /* 隱藏未指定棋子邊框 */
+    .hide {
+      border: 1px solid rgba(0, 0, 0, 0);
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <p>棋盤裡，車無輪，馬無韁，叫聲將軍堤防堤防</p>
+    <div class="main">
+      <div class="row">
+        <div class="col show-L"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+      </div>
+      <div class="row">
+        <div class="col show-L"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+      </div>
+      <div class="row">
+        <div class="col show-L"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+      </div>
+      <div class="row">
+        <div class="col show-L"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+      </div>
+      <div class="row reiver">
+        <div class="col show-L">楚河</div>
+        <div class="col ">漢界</div>
+      </div>
+      <div class="row">
+        <div class="col show-L"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+      </div>
+      <div class="row">
+        <div class="col show-L"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+      </div>
+      <div class="row">
+        <div class="col show-L"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+      </div>
+      <div class="row">
+        <div class="col show-L show-B"></div>
+        <div class="col show-B"></div>
+        <div class="col show-B"></div>
+        <div class="col show-B"></div>
+        <div class="col show-B"></div>
+        <div class="col show-B"></div>
+        <div class="col show-B"></div>
+        <div class="col show-B"></div>
+      </div>
+      <div class="chess">
+        <div class="black">
+          <div class="row2">
+            <div class="col2 backcolor">車</div>
+            <div class="col2 backcolor">馬</div>
+            <div class="col2 backcolor">象</div>
+            <div class="col2 backcolor">士</div>
+            <div class="col2 backcolor">將</div>
+            <div class="col2 backcolor">士</div>
+            <div class="col2 backcolor">象</div>
+            <div class="col2 backcolor">馬</div>
+            <div class="col2 backcolor">車</div>
+          </div>
+          <div class="row2">
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+          </div>
+          <div class="row2">
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">包</div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">包</div>
+            <div class="col2 hide"></div>
+          </div>
+          <div class="row2">
+            <div class="col2 backcolor">卒</div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">卒</div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">卒</div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">卒</div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">卒</div>
+          </div>
+        </div>
+        <div class="red">
+          <div class="row2">
+            <div class="col2 backcolor">兵</div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">兵</div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">兵</div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">兵</div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">兵</div>
+          </div>
+          <div class="row2">
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">炮</div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 backcolor">炮</div>
+            <div class="col2 hide"></div>
+          </div>
+          <div class="row2">
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+            <div class="col2 hide"></div>
+          </div>
+          <div class="row2">
+            <div class="col2 backcolor">俥</div>
+            <div class="col2 backcolor">傌</div>
+            <div class="col2 backcolor">相</div>
+            <div class="col2 backcolor">仕</div>
+            <div class="col2 backcolor">帥</div>
+            <div class="col2 backcolor">仕</div>
+            <div class="col2 backcolor">相</div>
+            <div class="col2 backcolor">傌</div>
+            <div class="col2 backcolor">俥</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>圖畫裡，龍不吟，虎不笑，小小書僮可笑可笑</p>
+  </div>
+</body>
+</html>
+<!-- 
+  .main => relative flexbox 水平垂直
+    .chessboard
+      .topChessboard
+      .reiver
+      .bottomChessboard
+    
+    .chess absolute
+      .black
+      .red
+
+-->
